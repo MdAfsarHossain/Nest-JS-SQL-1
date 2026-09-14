@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { CreateProfileDto } from 'src/profile/dtos/create-profile.dto';
 
 /* eslint-disable prettier/prettier */
 export class CreateUserDto {
@@ -36,4 +37,7 @@ export class CreateUserDto {
     @MinLength(8, {message: "Password must be 8 characters."})
     @MaxLength(100)
     password: string;
+
+    @IsOptional()
+    profile: CreateProfileDto | null;
 }
