@@ -41,8 +41,18 @@ export class UsersService {
         }
 
         // Create that user 
-        let newUser = this.userRepository.create(userDto);
-        newUser = await this.userRepository.save(newUser);
-        return newUser;
+        // let newUser = this.userRepository.create(userDto);
+        // newUser = await this.userRepository.save(newUser);
+        // return newUser;
+
+    const newUser = this.userRepository.create({
+        email: userDto.email,
+        username: userDto.username,
+        password: userDto.password,
+    });
+
+    const savedUser = await this.userRepository.save(newUser);
+
+    return savedUser;
     }
 }

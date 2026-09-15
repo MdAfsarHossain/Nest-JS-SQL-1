@@ -4,7 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/user.entity';
+// import { User } from './users/user.entity';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [UsersModule, TypeOrmModule.forRootAsync({
@@ -12,7 +13,8 @@ import { User } from './users/user.entity';
     inject: [],
     useFactory: () => ({
       type: 'postgres',
-      entities: [User],
+      // entities: [User],
+      autoLoadEntities: true, // it's auto load all entities
       synchronize: true,
       host: 'localhost',
       port: 5432,
@@ -20,7 +22,7 @@ import { User } from './users/user.entity';
       password: 'afsar',
       database: 'nestjs'
     })
-  })],
+  }), ProfileModule],
   controllers: [AppController],
   providers: [AppService],
 })
