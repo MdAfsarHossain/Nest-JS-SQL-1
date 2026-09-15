@@ -64,22 +64,39 @@ export class UsersService {
     // }
 
     // Create User
-    public async createUser(userDto: CreateUserDto){
+    
+    
+    // public async createUser(userDto: CreateUserDto){
 
-        console.log(userDto);
+    //     console.log(userDto);
 
-        // Keep the profile out of the user payload, it is saved separately below
-        const { profile: profileDto, ...userData } = userDto;
+    //     // Keep the profile out of the user payload, it is saved separately below
+    //     const { profile: profileDto, ...userData } = userDto;
 
-        // Create A profile & save
-        const profile = this.profileRepository.create(profileDto ?? {});
-        await this.profileRepository.save(profile)
+    //     // Create A profile & save
+    //     const profile = this.profileRepository.create(profileDto ?? {});
+    //     await this.profileRepository.save(profile)
 
-        // Create User Object 
-        const user = this.userRepository.create(userData);
+    //     // Create User Object 
+    //     const user = this.userRepository.create(userData);
 
-        // Set the profile
-        user.profile = profile; 
+    //     // Set the profile
+    //     user.profile = profile; 
+
+    //     // Save the user object
+    //     return await this.userRepository.save(user);
+    // }
+
+
+
+
+    // Create User
+    public async createUser(userDto: CreateUserDto) {
+        // Create a profile & Save
+        userDto.profile = userDto.profile ?? {};
+
+        // Create User Object
+        let user = this.userRepository.create(userDto);
 
         // Save the user object
         return await this.userRepository.save(user);
