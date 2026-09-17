@@ -20,6 +20,13 @@ export class UsersService {
     {}
 
     getAllUsers() {
+        // Eager Loading
+        // return this.userRepository.find({
+        //     relations: {
+        //         profile: true
+        //     }
+        // });
+
         return this.userRepository.find();
     }
 
