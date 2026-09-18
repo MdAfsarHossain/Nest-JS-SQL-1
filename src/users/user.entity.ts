@@ -51,10 +51,10 @@ export class User {
     })
     password: string;
 
-    @OneToOne(() => Profile, {
+    @OneToOne(() => Profile, (profile) => profile.user, {
         // cascade: true
         cascade: ['insert', 'remove'],
-        eager: true
+        // eager: true
     })
     @JoinColumn()
     profile?: Profile;

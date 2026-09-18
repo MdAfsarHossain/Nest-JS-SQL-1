@@ -1,4 +1,21 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Profile } from './profile.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class ProfileService {}
+export class ProfileService {
+    constructor(
+        @InjectRepository(Profile)
+        private readonly profileRepository: Repository<Profile>
+    ){}
+
+    public getAllProfiles() {
+        return this.profileRepository.find({
+            relations: {
+                user: true
+            }
+        })
+    }
+}

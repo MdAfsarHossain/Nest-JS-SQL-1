@@ -21,13 +21,13 @@ export class UsersService {
 
     getAllUsers() {
         // Eager Loading
-        // return this.userRepository.find({
-        //     relations: {
-        //         profile: true
-        //     }
-        // });
+        return this.userRepository.find({
+            relations: {
+                profile: true
+            }
+        });
 
-        return this.userRepository.find();
+        // return this.userRepository.find();
     }
 
     public async getUserById(userId: number) {
@@ -42,7 +42,7 @@ export class UsersService {
         return user;
     }
 
-    // public async createUser(userDto: CreateUserDto) {
+    // publusers/6ic async createUser(userDto: CreateUserDto) {
 
     //     // validate if a user exist with the given email
     //     const user = await this.userRepository.findOne({
