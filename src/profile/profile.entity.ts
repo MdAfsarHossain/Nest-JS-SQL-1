@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "src/users/user.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Profile {
@@ -53,4 +54,8 @@ export class Profile {
     
     @DeleteDateColumn()
     deleteAt: Date;
+
+    // Bi-Directional (One-To-One)
+    @OneToOne(() => User, (user) => user.profile)
+    user: User
 }
