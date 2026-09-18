@@ -36,7 +36,7 @@ export class UsersService {
         })
 
         if(!user) {
-            return 'This user does not exist!'
+            return {message: 'This user does not exist!'}
         }
 
         return user;
@@ -107,5 +107,23 @@ export class UsersService {
 
         // Save the user object
         return await this.userRepository.save(user);
+    }
+
+    // Delete User
+    public async deleteUser(id: number) {
+        // First find the user
+        let user = await this.userRepository.findOneBy({id})
+
+        if(!user) {
+            return {message: "User not found!"};
+        }
+
+        // Then delete the user
+        await this.userRepository.delete(id);
+
+        // Then delete the profile
+        await this.profileRepository.delete({id: user.profile?.id})
+
+        return {deleted: true}
     }
 }
