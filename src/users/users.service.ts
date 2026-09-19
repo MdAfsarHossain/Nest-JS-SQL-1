@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -36,13 +36,13 @@ export class UsersService {
         })
 
         if(!user) {
-            return {message: 'This user does not exist!'}
+            throw new NotFoundException('This user does not exist!')
         }
 
         return user;
     }
 
-    // publusers/6ic async createUser(userDto: CreateUserDto) {
+    // public async createUser(userDto: CreateUserDto) {
 
     //     // validate if a user exist with the given email
     //     const user = await this.userRepository.findOne({
