@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { CreateProfileDto } from 'src/profile/dtos/create-profile.dto';
 
 /* eslint-disable prettier/prettier */
@@ -39,5 +40,7 @@ export class CreateUserDto {
     password: string;
 
     @IsOptional()
+    @ValidateNested()
+    @Type(() => CreateProfileDto)
     profile?: CreateProfileDto;
 }
