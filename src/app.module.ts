@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // import { User } from './users/user.entity';
 import { ProfileModule } from './profile/profile.module';
 import { TweetModule } from './tweet/tweet.module';
+import { HashtagModule } from './hashtag/hashtag.module';
 
 @Module({
   imports: [UsersModule, TypeOrmModule.forRootAsync({
@@ -23,7 +24,7 @@ import { TweetModule } from './tweet/tweet.module';
       password: 'afsar',
       database: 'nestjs'
     })
-  }), ProfileModule, TweetModule],
+  }), ProfileModule, TweetModule, HashtagModule],
   controllers: [AppController],
   providers: [AppService],
 })
