@@ -24,4 +24,9 @@ export class HashtagController {
     public deleteHashtag(@Param('id', ParseIntPipe) id: number) {
         return this.hashtagService.deleteHashtag(id);
     }
+
+    @Delete('soft-delete/:id')
+    public softDeleteHashtag(@Param('id', ParseIntPipe) id: number) {
+        return this.hashtagService.softDeleteHashtag(id);
+    }
 }
