@@ -8,9 +8,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfileModule } from './profile/profile.module';
 import { TweetModule } from './tweet/tweet.module';
 import { HashtagModule } from './hashtag/hashtag.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forRootAsync({
+  imports: [
+    UsersModule, 
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    TypeOrmModule.forRootAsync({
     imports: [],
     inject: [],
     useFactory: () => ({

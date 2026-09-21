@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
@@ -7,6 +8,7 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { Profile } from 'src/profile/profile.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
@@ -15,11 +17,16 @@ export class UsersService {
         private userRepository: Repository<User>,
     
         @InjectRepository(Profile)
-        private profileRepository: Repository<Profile>
+        private profileRepository: Repository<Profile>,
+
+        private readonly configService: ConfigService
     )
     {}
 
     getAllUsers() {
+        const environment = this.configService.get('ENV_MODE');
+        console.log(environment);
+        
         // Eager Loading
         return this.userRepository.find({
             relations: {
