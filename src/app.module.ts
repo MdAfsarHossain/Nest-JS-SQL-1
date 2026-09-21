@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfileModule } from './profile/profile.module';
 import { TweetModule } from './tweet/tweet.module';
 import { HashtagModule } from './hashtag/hashtag.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -17,18 +17,18 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true
     }),
     TypeOrmModule.forRootAsync({
-    imports: [],
-    inject: [],
-    useFactory: () => ({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: (configService: ConfigService) => ({
       type: 'postgres',
       // entities: [User],
       autoLoadEntities: true, // it's auto load all entities
       synchronize: true,
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'afsar',
-      database: 'nestjs'
+      host: configService.get<string>('DB_HOST'),
+      port: Number(configService.get<string>('DB_PORT')),
+      username: configService.get<string>('DB_USERNAME'),
+      password: configService.get<string>('DB_PASSWORD'),
+      database: configService.get<string>('DB_NAME')
     })
   }), ProfileModule, TweetModule, HashtagModule],
   controllers: [AppController],
