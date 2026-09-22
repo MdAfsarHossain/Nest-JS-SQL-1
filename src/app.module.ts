@@ -10,11 +10,14 @@ import { TweetModule } from './tweet/tweet.module';
 import { HashtagModule } from './hashtag/hashtag.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+const ENV = process.env.NODE_ENV;
+
 @Module({
   imports: [
     UsersModule, 
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
+      envFilePath: !ENV ? '.env' : `.env.${ENV.trim()}` //  .env path
     }),
     TypeOrmModule.forRootAsync({
     imports: [ConfigModule],
