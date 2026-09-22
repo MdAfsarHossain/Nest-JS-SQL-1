@@ -24,7 +24,8 @@ export class UsersService {
     {}
 
     getAllUsers() {
-        const environment = this.configService.get('ENV_MODE');
+        const environment = this.configService.get('NODE_ENV');
+        // const environment = process.env.NODE_ENV;
         console.log(environment);
         
         // Eager Loading
