@@ -14,53 +14,56 @@ const ENV = process.env.NODE_ENV;
 
 @Module({
   imports: [
-    UsersModule, 
+    UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: !ENV ? '.env' : `.env.${ENV.trim()}` //  .env path
+      envFilePath: !ENV ? '.env' : `.env.${ENV.trim()}`, //  .env path
     }),
-  //   TypeOrmModule.forRootAsync({
-  //   imports: [ConfigModule],
-  //   inject: [ConfigService],
-  //   useFactory: (configService: ConfigService) => ({
-  //     type: 'postgres',
-  //     // entities: [User],
-  //     autoLoadEntities: true, // it's auto load all entities
-  //     synchronize: true,
-  //     host: configService.get<string>('DB_HOST'),
-  //     port: Number(configService.get<string>('DB_PORT')),
-  //     username: configService.get<string>('DB_USERNAME'),
-  //     password: configService.get<string>('DB_PASSWORD'),
-  //     database: configService.get<string>('DB_NAME')
-  //   })
-  // }),
-  
-  TypeOrmModule.forRootAsync({
-  imports: [ConfigModule],
-  inject: [ConfigService],
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        // entities: [User],
+        autoLoadEntities: true, // it's auto load all entities
+        synchronize: true,
+        host: configService.get<string>('DB_HOST'),
+        port: Number(configService.get<string>('DB_PORT')),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+      }),
+    }),
 
-  useFactory: (configService: ConfigService) => {
-    console.log('========== DATABASE CONFIG ==========');
-    console.log('NODE_ENV:', process.env.NODE_ENV);
-    console.log('DB_NAME:', configService.get<string>('DB_NAME'));
-    console.log('DB_HOST:', configService.get<string>('DB_HOST'));
-    console.log('DB_USERNAME:', configService.get<string>('DB_USERNAME'));
-    console.log('=====================================');
+    //   TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
 
-    return {
-      type: 'postgres',
-      autoLoadEntities: true,
-      synchronize: true,
+    //   useFactory: (configService: ConfigService) => {
+    //     console.log('========== DATABASE CONFIG ==========');
+    //     console.log('NODE_ENV:', process.env.NODE_ENV);
+    //     console.log('DB_NAME:', configService.get<string>('DB_NAME'));
+    //     console.log('DB_HOST:', configService.get<string>('DB_HOST'));
+    //     console.log('DB_USERNAME:', configService.get<string>('DB_USERNAME'));
+    //     console.log('=====================================');
 
-      host: configService.get<string>('DB_HOST'),
-      port: Number(configService.get<string>('DB_PORT')),
-      username: configService.get<string>('DB_USERNAME'),
-      password: configService.get<string>('DB_PASSWORD'),
-      database: configService.get<string>('DB_NAME'),
-    };
-  },
-}),
-  ProfileModule, TweetModule, HashtagModule],
+    //     return {
+    //       type: 'postgres',
+    //       autoLoadEntities: true,
+    //       synchronize: true,
+
+    //       host: configService.get<string>('DB_HOST'),
+    //       port: Number(configService.get<string>('DB_PORT')),
+    //       username: configService.get<string>('DB_USERNAME'),
+    //       password: configService.get<string>('DB_PASSWORD'),
+    //       database: configService.get<string>('DB_NAME'),
+    //     };
+    //   },
+    // }),
+    ProfileModule,
+    TweetModule,
+    HashtagModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
