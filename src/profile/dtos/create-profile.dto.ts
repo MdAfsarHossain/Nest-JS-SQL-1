@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { IsDate, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateProfileDto {
     @IsString({message: "First Name should be a string value."})
@@ -20,7 +21,8 @@ export class CreateProfileDto {
     gender?: string;
 
     @IsOptional()
-    @IsDate()
+    @Type(() => Date)
+    @IsDate({message: "Date of Birth must be a valid date (e.g. 2025-02-12)."})
     dateOfBirth?: Date;
 
     @IsString()
