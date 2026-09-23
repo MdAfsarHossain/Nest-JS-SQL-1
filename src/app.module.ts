@@ -9,6 +9,7 @@ import { ProfileModule } from './profile/profile.module';
 import { TweetModule } from './tweet/tweet.module';
 import { HashtagModule } from './hashtag/hashtag.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { appConfig } from './config/app.config';
 
 const ENV = process.env.NODE_ENV;
 
@@ -18,6 +19,7 @@ const ENV = process.env.NODE_ENV;
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: !ENV ? '.env' : `.env.${ENV.trim()}`, //  .env path
+      load: [appConfig]
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -25,13 +27,21 @@ const ENV = process.env.NODE_ENV;
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         // entities: [User],
-        autoLoadEntities: true, // it's auto load all entities
-        synchronize: true,
-        host: configService.get<string>('DB_HOST'),
-        port: Number(configService.get<string>('DB_PORT')),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
+        // autoLoadEntities: true, // it's auto load all entities
+        // synchronize: true,
+        // host: configService.get<string>('DB_HOST'),
+        // port: Number(configService.get<string>('DB_PORT')),
+        // username: configService.get<string>('DB_USERNAME'),
+        // password: configService.get<string>('DB_PASSWORD'),
+        // database: configService.get<string>('DB_NAME'),
+
+        autoLoadEntities: configService.get<boolean>('database.autoLoadEntities'),
+        synchronize: configService.get<boolean>('database.synchronize'),
+        host: configService.get<string>('database.host'),
+        port: Number(configService.get<string>('database.port')),
+        username: configService.get<string>('database.username'),
+        password: configService.get<string>('database.password'),
+        database: configService.get<string>('database.name'),
       }),
     }),
 
