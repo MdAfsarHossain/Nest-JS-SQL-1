@@ -13,6 +13,7 @@ import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 // import { appConfig } from './config/app.config';
 import { AuthModule } from './auth/auth.module';
+import  envValidator  from './config/env.validation';
 
 const ENV = process.env.NODE_ENV;
 
@@ -23,6 +24,16 @@ const ENV = process.env.NODE_ENV;
       isGlobal: true,
       envFilePath: !ENV ? '.env' : `.env.${ENV.trim()}`, //  .env path
       load: [appConfig, databaseConfig], // load custom config file
+      validate: (config: Record<string, any>) => {
+        const { error, value } = envValidator.validate(config, {
+          allowUnknown: true,
+          abortEarly: false,
+        });
+        if (error) {
+          throw new Error(`Config validation error: ${error.message}`);
+        }
+        return value;
+      }, // validate env variables with Joi
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
