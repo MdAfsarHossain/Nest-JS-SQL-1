@@ -133,6 +133,18 @@ export class UsersService {
             // Create a profile & Save
             userDto.profile = userDto.profile ?? {};
 
+            // Check if user with same username / email already exists
+            const existingUser = await this.userRepository.findOne({
+                where: [
+                    { email: userDto.email },
+                    { username: userDto.username }
+                ]
+            });
+
+            if (existingUser) {
+                throw new BadRequestException('A user with the given email or username already exists.');
+            }
+
             // Create User Object
             let user = this.userRepository.create(userDto);
 
@@ -150,10 +162,12 @@ export class UsersService {
                     description: 'Database connection error',
                 });
             }
-            if(error.code === '23505') {
-                throw new BadRequestException('A user with the given email or username already exists.'
-                );
-            }
+            // if(error.code === '23505') {
+            //     throw new BadRequestException('A user with the given email or username already exists.'
+            //     );
+            // }
+
+            throw error; // Re-throw the error to be handled by the global exception filter
         }
     }
 
