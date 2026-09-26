@@ -2,13 +2,15 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { Profile } from 'src/profile/profile.entity';
 import { ConfigService } from '@nestjs/config';
+import { table } from 'console';
+import { UserAlreadyExistsException } from 'src/CustomExceptions/user-already-exists.exception';
 
 @Injectable()
 export class UsersService {
@@ -66,7 +68,15 @@ export class UsersService {
         })
 
         if(!user) {
-            throw new NotFoundException('This user does not exist!')
+            // throw new NotFoundException('This user does not exist!')
+
+            throw new HttpException({
+                status: HttpStatus.NOT_FOUND,
+                error: `The user with the given id ${userId} does not exist!`,
+                table: 'users'
+            }, HttpStatus.NOT_FOUND, {
+                description: 'User not found in the database',
+            })
         }
 
         return user;
@@ -134,15 +144,31 @@ export class UsersService {
             userDto.profile = userDto.profile ?? {};
 
             // Check if user with same username / email already exists
-            const existingUser = await this.userRepository.findOne({
-                where: [
-                    { email: userDto.email },
-                    { username: userDto.username }
-                ]
+            // const existingUser = await this.userRepository.findOne({
+            //     where: [
+            //         { email: userDto.email },
+            //         { username: userDto.username }
+            //     ]
+            // });
+
+            // if (existingUser) {
+            //     throw new BadRequestException('A user with the given email or username already exists.');
+            // }
+
+            const existingUserByEmail = await this.userRepository.findOne({
+                where: { email: userDto.email }
             });
 
-            if (existingUser) {
-                throw new BadRequestException('A user with the given email or username already exists.');
+            if(existingUserByEmail) {
+                throw new UserAlreadyExistsException('email', userDto.email);
+            }
+
+            const existingUserByUsername = await this.userRepository.findOne({
+                where: { username: userDto.username }
+            });
+
+            if(existingUserByUsername) {
+                throw new UserAlreadyExistsException('username', userDto.username);
             }
 
             // Create User Object
