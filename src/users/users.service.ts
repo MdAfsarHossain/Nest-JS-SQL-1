@@ -2,7 +2,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -23,19 +23,36 @@ export class UsersService {
     )
     {}
 
-    getAllUsers() {
+    public async getAllUsers() {
         const environment = this.configService.get('NODE_ENV');
         // const environment = process.env.NODE_ENV;
         console.log(environment);
         
         // Eager Loading
-        return this.userRepository.find({
-            relations: {
-                profile: true
-            }
-        });
+        // return await this.userRepository.find({
+        //     relations: {
+        //         profile: true
+        //     }
+        // });
 
         // return this.userRepository.find();
+
+        // NOTE: 
+        // DB Connection Error Handling
+        try {
+            return await this.userRepository.find({
+                relations: {
+                    profile: true
+                }
+            });
+        }
+        catch (error) {
+            console.error('Error connecting to the database:', error);
+            // throw new Error('Database connection error');
+            throw new RequestTimeoutException('An error occurred while connecting to the database. Please try again later.', {
+                description: 'Database connection error',
+            });
+        }
     }
 
     public async getUserById(userId: number) {
