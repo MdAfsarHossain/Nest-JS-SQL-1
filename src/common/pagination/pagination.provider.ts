@@ -24,6 +24,27 @@ export class PaginationProvider {
             findOptions.where = where;
         }
 
-        return await repository.find(findOptions);
+        const result = await repository.find(findOptions);
+
+        const totalItems = await repository.count();
+        const totalPages = Math.ceil(totalItems / limit);
+
+        const nextPage = page === totalPages ? page : page + 1;
+        const prevPage = page === 1 ? page : page - 1;
+
+        const response = {
+            data: result,
+            meta: {
+                itemsPerPage: limit,
+                totalItems: totalItems,
+                currentPage: page,
+                totalPages: totalPages
+            },
+            links: {
+
+            }
+        }
+
+        return result;
     }
 }
