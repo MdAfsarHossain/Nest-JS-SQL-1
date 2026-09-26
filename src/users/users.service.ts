@@ -2,7 +2,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -46,9 +46,14 @@ export class UsersService {
                 }
             });
         }
-        catch (error) {
+        catch (error: any) {
             console.error('Error connecting to the database:', error);
-            // throw new Error('Database connection error');
+            
+            if(error.code === 'ECONNREFUSED') {
+                throw new RequestTimeoutException('Database connection refused. Please check your database server.', {
+                    description: 'Database connection error',
+                });
+            }
             throw new RequestTimeoutException('An error occurred while connecting to the database. Please try again later.', {
                 description: 'Database connection error',
             });
@@ -124,14 +129,32 @@ export class UsersService {
 
     // Create User
     public async createUser(userDto: CreateUserDto) {
-        // Create a profile & Save
-        userDto.profile = userDto.profile ?? {};
+        try {
+            // Create a profile & Save
+            userDto.profile = userDto.profile ?? {};
 
-        // Create User Object
-        let user = this.userRepository.create(userDto);
+            // Create User Object
+            let user = this.userRepository.create(userDto);
 
-        // Save the user object
-        return await this.userRepository.save(user);
+            // Save the user object
+            return await this.userRepository.save(user);
+        } catch (error: any) {
+            console.error('Error connecting to the database:', error);
+            // throw new Error('Database connection error');
+            // throw new RequestTimeoutException('An error occurred while connecting to the database. Please try again later.', {
+            //     description: 'Database connection error',
+            // });
+            
+            if(error.code === 'ECONNREFUSED') {
+                throw new RequestTimeoutException('Database connection refused. Please check your database server.', {
+                    description: 'Database connection error',
+                });
+            }
+            if(error.code === '23505') {
+                throw new BadRequestException('A user with the given email or username already exists.'
+                );
+            }
+        }
     }
 
     // Delete User
