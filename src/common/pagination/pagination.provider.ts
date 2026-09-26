@@ -3,6 +3,7 @@ import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
 import type { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
+import { Paginated } from './pagination.interface';
 
 @Injectable()
 export class PaginationProvider {
@@ -16,7 +17,7 @@ export class PaginationProvider {
         repository: Repository<T>,
         where?: FindOptionsWhere<T>,
         relations?: FindOptionsRelations<T>
-    ){
+    ): Promise<Paginated<T>>{
         const { page = 1, limit = 10 } = paginationQueryDto;
         const findOptions: FindManyOptions<T> = {
             skip: (page - 1) * limit,
@@ -51,7 +52,7 @@ export class PaginationProvider {
         logging: console.log('New URL:', newUrl.toString());
         logging: console.log('URL:', this.request.url);
 
-        const response = {
+        const response: Paginated<T> = {
             data: result,
             meta: {
                 itemsPerPage: limit,
