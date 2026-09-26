@@ -11,6 +11,9 @@ async function bootstrap() {
       whitelist: true, // drop properties that have no decorator on the DTO
       forbidNonWhitelisted: true, // ...and reject the request when they are present
       transform: true, // turn the plain body into an actual DTO instance
+      transformOptions: {
+        enableImplicitConversion: true, // allow implicit type conversion (e.g., string to number)
+      }
     }),
   );
 
