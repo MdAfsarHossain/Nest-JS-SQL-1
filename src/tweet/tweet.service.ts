@@ -41,7 +41,7 @@ export class TweetService {
         const {limit = 10, page = 1} = paginationQueryDto;
         return await this.tweetRepository.find({
             where: {user: {id: userId}},
-            relations: {user: true, hashtags: true},
+            // relations: {user: true, hashtags: true},
             skip: (page - 1) * limit,
             take: limit
         })
