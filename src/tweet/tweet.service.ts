@@ -24,6 +24,13 @@ export class TweetService {
     }
 
     public async getMyAllTweets(userId: number) {
+
+        const user = await this.userService.getUserById(userId);
+
+        if(!user) {
+            throw new NotFoundException('This user does not exist!');
+        }
+
         return await this.tweetRepository.find({
             where: {user: {id: userId}},
             relations: {user: true, hashtags: true}
