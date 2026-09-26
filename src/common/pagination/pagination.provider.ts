@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
-import { FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
 
 @Injectable()
 export class PaginationProvider {
@@ -10,10 +10,20 @@ export class PaginationProvider {
         where?: FindOptionsWhere<T>
     ){
         const { page = 1, limit = 10 } = paginationQueryDto;
-
-        return await repository.find({
+        const findOptions: FindManyOptions<T> = {
             skip: (page - 1) * limit,
-            take: limit
-        })
+            take: limit,
+        }
+
+        // return await repository.find({
+        //     skip: (page - 1) * limit,
+        //     take: limit
+        // })
+
+        if(where) {
+            findOptions.where = where;
+        }
+
+        return await repository.find(findOptions);
     }
 }
