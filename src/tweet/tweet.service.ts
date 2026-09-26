@@ -8,6 +8,7 @@ import { Tweet } from './tweet.entity';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Injectable()
 export class TweetService {
@@ -23,7 +24,7 @@ export class TweetService {
         return await this.tweetRepository.find();
     }
 
-    public async getMyAllTweets(userId: number) {
+    public async getMyAllTweets(userId: number, paginationQueryDto: PaginationQueryDto) {
 
         const user = await this.userService.getUserById(userId);
 
@@ -31,9 +32,18 @@ export class TweetService {
             throw new NotFoundException('This user does not exist!');
         }
 
+        // return await this.tweetRepository.find({
+        //     where: {user: {id: userId}},
+        //     relations: {user: true, hashtags: true}
+        // })
+
+        // WITH PAGINATION
+        const {limit = 10, page = 1} = paginationQueryDto;
         return await this.tweetRepository.find({
             where: {user: {id: userId}},
-            relations: {user: true, hashtags: true}
+            relations: {user: true, hashtags: true},
+            skip: (page - 1) * limit,
+            take: limit
         })
     }
 

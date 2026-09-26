@@ -24,7 +24,7 @@ export class TweetController {
     ) {
         console.log(paginationQueryDto);
         
-        return this.tweetService.getMyAllTweets(userId);
+        return this.tweetService.getMyAllTweets(userId, paginationQueryDto);
     }
 
     @Post()
