@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { FindManyOptions, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import type { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class PaginationProvider {
+    constructor(
+        @Inject(REQUEST)
+        private readonly request: Request
+    ) {}
+
     public async paginateQuery<T extends ObjectLiteral>(
         paginationQueryDto: PaginationQueryDto,
         repository: Repository<T>,
@@ -32,6 +39,13 @@ export class PaginationProvider {
         const nextPage = page === totalPages ? page : page + 1;
         const prevPage = page === 1 ? page : page - 1;
 
+        const baseUrl = this.request.protocol + '://' + this.request.headers.host + '/';
+        const newUrl = new URL(this.request.url, baseUrl);
+
+        logging: console.log('Base URL:', baseUrl);
+        logging: console.log('New URL:', newUrl.toString());
+        logging: console.log('URL:', this.request.url);
+
         const response = {
             data: result,
             meta: {
@@ -41,10 +55,15 @@ export class PaginationProvider {
                 totalPages: totalPages
             },
             links: {
-
+                first: `${newUrl.origin}${newUrl.pathname}?page=1&limit=${limit}`,
+                last: `${newUrl.origin}${newUrl.pathname}?page=${totalPages}&limit=${limit}`,
+                current: `${newUrl.origin}${newUrl.pathname}?page=${page}&limit=${limit}`,
+                next: `${newUrl.origin}${newUrl.pathname}?page=${nextPage}&limit=${limit}`,
+                previous: `${newUrl.origin}${newUrl.pathname}?page=${prevPage}&limit=${limit}`
             }
         }
 
-        return result;
+        // return result;
+        return response;
     }
 }
