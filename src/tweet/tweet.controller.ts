@@ -4,6 +4,7 @@ import { TweetService } from './tweet.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
+import { GetTweetQueryDto } from './dto/get-tweet-query.dto';
 
 @Controller('tweet')
 export class TweetController {
@@ -20,11 +21,14 @@ export class TweetController {
     @Get(':userId')
     public getMyAllTweets(
         @Param('userId', ParseIntPipe) userId: number,
-        @Query() paginationQueryDto: PaginationQueryDto    
+        // @Query() paginationQueryDto: PaginationQueryDto
+        @Query() getTweetQueryDto: GetTweetQueryDto    
     ) {
-        console.log(paginationQueryDto);
+
+        console.log(getTweetQueryDto);
+        // console.log(paginationQueryDto);
         
-        return this.tweetService.getMyAllTweets(userId, paginationQueryDto);
+        // return this.tweetService.getMyAllTweets(userId, paginationQueryDto);
     }
 
     @Post()
