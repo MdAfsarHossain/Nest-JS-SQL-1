@@ -2,13 +2,14 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { Profile } from 'src/profile/profile.entity';
 import { ConfigService } from '@nestjs/config';
+import { table } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -66,7 +67,15 @@ export class UsersService {
         })
 
         if(!user) {
-            throw new NotFoundException('This user does not exist!')
+            // throw new NotFoundException('This user does not exist!')
+
+            throw new HttpException({
+                status: HttpStatus.NOT_FOUND,
+                error: `The user with the given id ${userId} does not exist!`,
+                table: 'users'
+            }, HttpStatus.NOT_FOUND, {
+                description: 'User not found in the database',
+            })
         }
 
         return user;
