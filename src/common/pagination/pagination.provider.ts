@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
-import { FindManyOptions, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
 import type { Request } from 'express';
 import { REQUEST } from '@nestjs/core';
 
@@ -14,7 +14,8 @@ export class PaginationProvider {
     public async paginateQuery<T extends ObjectLiteral>(
         paginationQueryDto: PaginationQueryDto,
         repository: Repository<T>,
-        where?: FindOptionsWhere<T>
+        where?: FindOptionsWhere<T>,
+        relations?: FindOptionsRelations<T>
     ){
         const { page = 1, limit = 10 } = paginationQueryDto;
         const findOptions: FindManyOptions<T> = {
@@ -29,6 +30,10 @@ export class PaginationProvider {
 
         if(where) {
             findOptions.where = where;
+        }
+
+        if(relations) {
+            findOptions.relations = relations;
         }
 
         const result = await repository.find(findOptions);

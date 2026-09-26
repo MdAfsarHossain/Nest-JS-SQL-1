@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Controller('users')
 export class UsersController {
@@ -11,8 +12,10 @@ export class UsersController {
     }
 
     @Get()
-    getAllUsers() {
-        return this.usersService.getAllUsers();
+    getAllUsers(
+        @Query() paginationQueryDto: PaginationQueryDto
+    ) {
+        return this.usersService.getAllUsers(paginationQueryDto);
     }
 
     @Get(':userId')
