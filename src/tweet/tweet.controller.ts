@@ -21,14 +21,14 @@ export class TweetController {
     @Get(':userId')
     public getMyAllTweets(
         @Param('userId', ParseIntPipe) userId: number,
-        // @Query() paginationQueryDto: PaginationQueryDto
-        @Query() getTweetQueryDto: GetTweetQueryDto    
+        @Query() paginationQueryDto: PaginationQueryDto
+        // @Query() getTweetQueryDto: GetTweetQueryDto    
     ) {
 
-        console.log(getTweetQueryDto);
-        // console.log(paginationQueryDto);
+        // console.log(getTweetQueryDto);
+        console.log(paginationQueryDto);
         
-        // return this.tweetService.getMyAllTweets(userId, paginationQueryDto);
+        return this.tweetService.getMyAllTweets(userId, paginationQueryDto);
     }
 
     @Post()
