@@ -17,6 +17,6 @@ import authConfig from './config/auth.config';
     forwardRef(() => UsersModule),
     ConfigModule.forFeature(authConfig)
   ],
-  exports: [AuthService]
+  exports: [AuthService, HashingProvider]
 })
 export class AuthModule {}
