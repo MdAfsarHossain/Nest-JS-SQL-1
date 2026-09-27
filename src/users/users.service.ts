@@ -238,4 +238,14 @@ export class UsersService {
 
         return {deleted: true}
     }
+
+    // 
+    public async findUserByEmail(email: string) {
+        let user = await this.userRepository.findOne({
+            where: {
+                email: email
+            }
+        })
+        return user
+    }
 }
