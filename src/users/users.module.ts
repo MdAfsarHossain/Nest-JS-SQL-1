@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Profile } from 'src/profile/profile.entity';
 import { PaginationModule } from 'src/common/pagination/pagination.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [UsersController],
@@ -13,6 +14,8 @@ import { PaginationModule } from 'src/common/pagination/pagination.module';
   exports: [UsersService],
   imports: [
     PaginationModule,
-    TypeOrmModule.forFeature([User, Profile])]
+    TypeOrmModule.forFeature([User, Profile]),
+    forwardRef(() => AuthModule),
+  ]
 })
 export class UsersModule {}

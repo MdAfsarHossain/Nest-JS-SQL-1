@@ -2,7 +2,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -14,6 +14,7 @@ import { UserAlreadyExistsException } from 'src/CustomExceptions/user-already-ex
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { Paginated } from 'src/common/pagination/pagination.interface';
+import { HashingProvider } from 'src/auth/provider/hashing.provider';
 
 @Injectable()
 export class UsersService {
@@ -25,7 +26,10 @@ export class UsersService {
         private profileRepository: Repository<Profile>,
 
         private readonly configService: ConfigService,
-        private readonly paginationProvider: PaginationProvider
+        private readonly paginationProvider: PaginationProvider,
+
+        @Inject(forwardRef(() => HashingProvider))
+        private readonly hashingProvider: HashingProvider
     )
     {}
 
@@ -183,7 +187,11 @@ export class UsersService {
             }
 
             // Create User Object
-            let user = this.userRepository.create(userDto);
+            // let user = this.userRepository.create(userDto);
+            let user = this.userRepository.create({
+                ...userDto,
+                password: await this.hashingProvider.hashPassword(userDto.password)
+            })
 
             // Save the user object
             return await this.userRepository.save(user);

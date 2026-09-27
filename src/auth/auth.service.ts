@@ -8,8 +8,8 @@ import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 export class AuthService {
 
     constructor(
-        // @Inject(forwardRef(() => UsersService)) // Use forwardRef to resolve circular dependency
-        @Inject()
+        @Inject(forwardRef(() => UsersService)) // Use forwardRef to resolve circular dependency
+        // @Inject()
         private readonly userService: UsersService,
 
         @Inject(authConfig.KEY)
