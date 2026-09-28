@@ -4,6 +4,7 @@ import { UsersService } from 'src/users/users.service';
 import authConfig from './config/auth.config';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { HashingProvider } from './provider/hashing.provider';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
         private readonly authConfiguration: ConfigType<typeof authConfig>,
 
         private readonly hashingProvider: HashingProvider,
+        private readonly jwtService: JwtService,
     ) {}
 
 
@@ -39,12 +41,22 @@ export class AuthService {
         }
 
         // If the password match, login success - return access token
-
+        // GENERATE JWT & SEND IT IN THE RESPONSE 
+        const token = await this.jwtService.signAsync({
+            sub: user.id,
+            email: user.email
+        }, {
+            secret: this.authConfiguration.secret,
+            expiresIn: this.authConfiguration.expiresIn,
+            audience: this.authConfiguration.audience,
+            issuer: this.authConfiguration.issuer
+        })
 
         return { 
             success: true,
             message: `User ${email} logged in successfully`,
-            data: user 
+            // data: user 
+            token: token
         };
         
     }
