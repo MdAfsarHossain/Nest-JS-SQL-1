@@ -1,10 +1,21 @@
-import { CanActivate, ExecutionContext } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Inject, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { Observable } from "rxjs";
+import authConfig from "../config/auth.config";
+import type { ConfigType } from "@nestjs/config";
 
 
 export class AuthorizeGuard implements CanActivate {
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+
+    constructor(
+        private readonly jwtService: JwtService,
+
+        @Inject(authConfig.KEY)
+        private readonly authConfiguration: ConfigType<typeof authConfig>,
+    ) {}
+
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         // throw new Error("Method not implemented.");
 
         // 1. Extract request from execution context
@@ -17,6 +28,20 @@ export class AuthorizeGuard implements CanActivate {
         
 
         // 3. Validate token and provide / deny access
+        if(!token) {
+            throw new UnauthorizedException();
+        }
+
+        try {
+            const payload = await this.jwtService.verifyAsync(token, this.authConfiguration)
+
+            request['user'] = payload;
+
+            console.log(payload);
+            
+        } catch(error) {
+            throw new UnauthorizedException();
+        }
 
         return true
     }
