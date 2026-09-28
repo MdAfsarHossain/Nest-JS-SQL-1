@@ -20,6 +20,7 @@ export class UsersController {
         return this.usersService.getAllUsers(paginationQueryDto);
     }
 
+    @UseGuards(AuthorizeGuard)
     @Get(':userId')
     getUserById(@Param('userId') userId: number) {
         return this.usersService.getUserById(userId)
