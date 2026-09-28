@@ -15,6 +15,10 @@ import databaseConfig from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { PaginationModule } from './common/pagination/pagination.module';
 import  envValidator  from './config/env.validation';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthorizeGuard } from './auth/guards/authorize.guard';
+import authConfig from './auth/config/auth.config';
+import { JwtModule } from '@nestjs/jwt';
 
 const ENV = process.env.NODE_ENV;
 
@@ -90,8 +94,15 @@ const ENV = process.env.NODE_ENV;
     HashtagModule,
     AuthModule,
     PaginationModule,
+    ConfigModule.forFeature(authConfig), // for Use Guard
+    JwtModule.registerAsync(authConfig.asProvider()) // for use guard
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, 
+  //Applying Gurad Globally
+  {
+    provide: APP_GUARD,
+    useClass: AuthorizeGuard
+  }],
 })
 export class AppModule {}
