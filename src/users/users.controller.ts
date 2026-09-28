@@ -4,10 +4,10 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGua
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
-import { AuthorizeGuard } from 'src/auth/guards/authorize.guard';
+// import { AuthorizeGuard } from 'src/auth/guards/authorize.guard';
 
 @Controller('users')
-@UseGuards(AuthorizeGuard)
+// @UseGuards(AuthorizeGuard)
 export class UsersController {
     constructor(private usersService: UsersService) {
         
