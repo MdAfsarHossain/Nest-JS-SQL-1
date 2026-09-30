@@ -4,6 +4,7 @@ import { Request } from "express";
 import { Observable } from "rxjs";
 import authConfig from "../config/auth.config";
 import type { ConfigType } from "@nestjs/config";
+import { Reflector } from "@nestjs/core";
 
 
 export class AuthorizeGuard implements CanActivate {
@@ -13,10 +14,22 @@ export class AuthorizeGuard implements CanActivate {
 
         @Inject(authConfig.KEY)
         private readonly authConfiguration: ConfigType<typeof authConfig>,
+
+        private readonly reflector: Reflector,
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         // throw new Error("Method not implemented.");
+
+        // READ isPublic MetaData
+        const isPublic = this.reflector.getAllAndOverride('isPublic', [
+            context.getHandler(), // login, signup
+            context.getClass(), // Controller Class [AuthController]
+        ])
+
+        if(isPublic) {
+            return true
+        }
 
         // 1. Extract request from execution context
         const request: Request = context.switchToHttp().getRequest();

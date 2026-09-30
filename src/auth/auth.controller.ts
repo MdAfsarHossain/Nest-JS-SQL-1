@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AllowAnonymous } from './decorators/allow-anonymous.decorator';
 
@@ -11,10 +11,12 @@ export class AuthController {
 
     @AllowAnonymous()
     @Post()
+    @HttpCode(HttpStatus.OK)
     login(@Body() user: {email: string, password: string}) {
         return this.authService.login(user.email, user.password);
     }
 
+    @AllowAnonymous()
     @Post('signup')
     public async signUp(@Body() createUserDto: any) {
         return await this.authService.signUp(createUserDto);
