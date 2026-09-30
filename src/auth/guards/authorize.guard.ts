@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import authConfig from "../config/auth.config";
 import type { ConfigType } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
+import { REQUEST_USER_KEY } from "src/constants/constants";
 
 
 export class AuthorizeGuard implements CanActivate {
@@ -48,9 +49,10 @@ export class AuthorizeGuard implements CanActivate {
         try {
             const payload = await this.jwtService.verifyAsync(token, this.authConfiguration)
 
-            request['user'] = payload;
+            // request['user'] = payload;
+            request[REQUEST_USER_KEY] = payload;
 
-            console.log(payload);
+            // console.log(payload);
             
         } catch(error) {
             throw new UnauthorizedException();
