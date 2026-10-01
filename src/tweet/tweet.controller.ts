@@ -48,9 +48,9 @@ export class TweetController {
 
     @Post()
     public createTweet(@Body() tweet: CreateTweetDto, @ActiveUser() user) {
-        console.log(user);
+        // console.log(user);
         
-        // return this.tweetService.createTweet(tweet)
+        return this.tweetService.createTweet(tweet, user)
     }
 
     // Update Tweet
