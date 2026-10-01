@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
@@ -11,6 +11,9 @@ import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { Paginated } from 'src/common/pagination/pagination.interface';
+import { ActiveUserType } from 'src/auth/interfaces/active-user-type.interface';
+import { User } from 'src/users/user.entity';
+import { Hashtag } from 'src/hashtag/hashtag.entity';
 
 @Injectable()
 export class TweetService {
@@ -58,19 +61,57 @@ export class TweetService {
         )
     }
 
-    public async createTweet(createTweetDto: CreateTweetDto) {
-        // Find user with the given userid from user table
-        // getUserById throws NotFoundException when there is no such user
-        const user = await this.userService.getUserById(createTweetDto.userId);
+    // public async createTweet(createTweetDto: CreateTweetDto, user: ActiveUserType) {
+    //     // Find user with the given userid from user table
+    //     // getUserById throws NotFoundException when there is no such user
+    //     // const user = await this.userService.getUserById(createTweetDto.userId);
 
-        // Fetch all the hashtags based on hashtag array
-        let hashtags = await this.hashtagService.findHashtags(createTweetDto.hashtags);
+    //     const userData = await this.userService.getUserById(user.sub);
+
+    //     // Fetch all the hashtags based on hashtag array
+    //     let hashtags = await this.hashtagService.findHashtags(createTweetDto.hashtags);
+
+    //     // Create a tweet
+    //     const tweet = this.tweetRepository.create({...createTweetDto, user: userData, hashtags})
+
+    //     // Save the tweet 
+    //     return await this.tweetRepository.save(tweet)
+    // }
+
+
+    
+    public async createTweet(createTweetDto: CreateTweetDto, userData: ActiveUserType) {
+        let user: User | undefined = undefined;
+        let hashtags: Hashtag[] | undefined = undefined;
+
+        try {
+            // Find user with the given userid from user table
+            user = await this.userService.getUserById(userData.sub);
+
+            
+            // Fetch all the hashtags based on hashtag array
+            if(createTweetDto.hashtags) {
+                hashtags = await this.hashtagService.findHashtags(createTweetDto.hashtags);
+            }
+        } catch (error) {
+            throw new RequestTimeoutException();
+        }
+        
+        if(createTweetDto.hashtags?.length !== hashtags?.length ) {
+            // throw new NotFoundException('No hashtags found for the given IDs!');
+            throw new BadRequestException('No hashtags found for the given IDs!');
+        }
 
         // Create a tweet
         const tweet = this.tweetRepository.create({...createTweetDto, user: user, hashtags})
 
-        // Save the tweet
-        return await this.tweetRepository.save(tweet)
+        try {
+            // Save the tweet 
+            return await this.tweetRepository.save(tweet)
+
+        } catch (error) {
+            throw new ConflictException(error);
+        }
     }
 
     public async updateTweet(updateTweetDto: UpdateTweetDto) {
