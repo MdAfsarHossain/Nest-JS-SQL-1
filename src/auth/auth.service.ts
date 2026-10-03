@@ -52,6 +52,15 @@ export class AuthService {
             issuer: this.authConfiguration.issuer
         })
 
+        const refreshToken = await this.jwtService.signAsync({
+            sub: user.id,
+        }, {
+            secret: this.authConfiguration.secret,
+            expiresIn: this.authConfiguration.refreshTokenExpiresIn,
+            audience: this.authConfiguration.audience,
+            issuer: this.authConfiguration.issuer
+        })
+
         return { 
             success: true,
             message: `User ${email} logged in successfully`,
@@ -63,6 +72,18 @@ export class AuthService {
 
     public async signUp(createUserDto: CreateUserDto) {
         return this.userService.createUser(createUserDto);
+    }
+
+    private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
+        return await this.jwtService.signAsync({
+            sub: userId,
+            ...payload
+        }, {
+            secret: this.authConfiguration.secret,
+            expiresIn: expiresIn,
+            audience: this.authConfiguration.audience,
+            issuer: this.authConfiguration.issuer
+        })
     }
 
 }
