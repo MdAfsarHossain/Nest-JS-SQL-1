@@ -5,6 +5,10 @@ import authConfig from './config/auth.config';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { HashingProvider } from './provider/hashing.provider';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/user.entity';
+import { log } from 'console';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ActiveUserType } from './interfaces/active-user-type.interface';
 
 @Injectable()
 export class AuthService {
@@ -65,13 +69,45 @@ export class AuthService {
             success: true,
             message: `User ${email} logged in successfully`,
             // data: user 
-            token: token
+            token: token,
+            refreshToken: refreshToken
         };
         
     }
 
     public async signUp(createUserDto: CreateUserDto) {
         return this.userService.createUser(createUserDto);
+    }
+
+    public async refreshToken(refreshTokenDto: string) {
+        try {
+            console.log('refreshTokenDto:', refreshTokenDto);
+            // 1. Verify the refresh token
+            const { sub } = await this.jwtService.verifyAsync(refreshTokenDto, {
+                secret: this.authConfiguration.secret,
+                audience: this.authConfiguration.audience,
+                issuer: this.authConfiguration.issuer
+            });
+
+            console.log('sub:', sub);
+
+            // 2. Find the user from db using user id
+            const user = await this.userService.getUserById(sub);
+
+            // 3. Generate new access token and refresh token
+            const { token, refreshToken } = await this.generateToken(user);
+
+            return {
+                success: true,
+                message: 'Token refreshed successfully',
+                data: {
+                    token,
+                    refreshToken
+                }
+            };
+        } catch (error) {
+            throw new UnauthorizedException('Invalid refresh token');
+        }
     }
 
     private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
@@ -84,6 +120,21 @@ export class AuthService {
             audience: this.authConfiguration.audience,
             issuer: this.authConfiguration.issuer
         })
+    }
+
+    private async generateToken(user: User) {
+        // GENERATE ACCESS TOKEN
+        const accessToken = await this.signToken<Partial<ActiveUserType>>(user.id, this.authConfiguration.expiresIn, {
+            email: user.email
+        });
+
+        // GENERATE REFRESH TOKEN
+        const refreshToken = await this.signToken(user.id, this.authConfiguration.refreshTokenExpiresIn);
+
+        return {
+            token: accessToken,
+            refreshToken
+        }
     }
 
 }
