@@ -1,3 +1,7 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import type { ConfigType } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';

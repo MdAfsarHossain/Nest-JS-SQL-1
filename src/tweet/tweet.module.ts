@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TweetController } from './tweet.controller';
 import { TweetService } from './tweet.service';

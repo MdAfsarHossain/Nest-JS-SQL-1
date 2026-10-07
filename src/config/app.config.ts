@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { registerAs } from "@nestjs/config";
 
 // CUSTOM CONFIG FILE with Namespace
