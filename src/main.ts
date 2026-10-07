@@ -29,3 +29,10 @@ bootstrap();
 // FOR WINDOWS
 // "start:dev": "SET NODE_ENV=development && nest start --watch",
 // "start:test": "SET NODE_ENV=test&& nest start --watch",
+
+// Supabase Row Level Security Enable
+// ALTER TABLE public."user"        ENABLE ROW LEVEL SECURITY;
+// ALTER TABLE public.profile       ENABLE ROW LEVEL SECURITY;
+// ALTER TABLE public.tweet         ENABLE ROW LEVEL SECURITY;
+// ALTER TABLE public.hashtag       ENABLE ROW LEVEL SECURITY;
+// ALTER TABLE public.tweet_hashtags_hashtag ENABLE ROW LEVEL SECURITY;
