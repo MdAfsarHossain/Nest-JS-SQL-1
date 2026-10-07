@@ -1,3 +1,6 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { ActiveUserType } from "../interfaces/active-user-type.interface";
 

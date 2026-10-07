@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { HttpException } from "@nestjs/common";
 
 

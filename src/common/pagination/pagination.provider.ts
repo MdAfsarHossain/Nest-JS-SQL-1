@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-labels */
+/* eslint-disable prettier/prettier */
 import { Inject, Injectable } from '@nestjs/common';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
