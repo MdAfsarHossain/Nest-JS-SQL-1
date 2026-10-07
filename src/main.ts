@@ -23,4 +23,9 @@ async function bootstrap() {
 bootstrap();
 
 // FOR MAC
+// "start:dev": "NODE_ENV=development nest start --watch",
 // "start:test": "NODE_ENV=test nest start --watch",
+
+// FOR WINDOWS
+// "start:dev": "SET NODE_ENV=development && nest start --watch",
+// "start:test": "SET NODE_ENV=test&& nest start --watch",
